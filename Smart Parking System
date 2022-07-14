@@ -1,0 +1,108 @@
+int distanceThreshold = 0;
+
+int cm = 0;
+int i=0;
+
+int inches = 0;
+char Incoming_value=0;
+void setup()
+{
+  Serial.begin(9600);
+  pinMode(8,OUTPUT);
+  pinMode(2, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(13,OUTPUT);
+  pinMode(7,OUTPUT);
+  pinMode(6,INPUT);
+}
+
+void loop()
+{
+  int pulse1;
+  distanceThreshold = 30;
+  digitalWrite(7,HIGH);
+  delay(5);
+  digitalWrite(7,LOW);
+ 
+  pulse1=pulseIn(6,HIGH);
+  cm = 0.01723 * pulse1;
+  inches = (cm / 2.54);
+  Serial.print(cm);
+  Serial.print("cm, ");
+  Serial.print(inches);
+  Serial.print("in,");
+  Serial.print(pulse1);
+  Serial.println(" ");
+  if (cm > distanceThreshold) {
+    digitalWrite(2, LOW);
+    digitalWrite(3, LOW);
+    digitalWrite(4, LOW);
+  }
+  
+  if (cm <= distanceThreshold && cm > distanceThreshold - 10)
+  {
+    digitalWrite(2, HIGH);
+    digitalWrite(3, LOW);
+    digitalWrite(4, LOW);
+    i=1;
+    while (i==1)
+    {
+    tone(13,1000);
+      delay(500);
+      noTone(13);
+      delay(500);
+      i=0;
+    }
+  }
+  
+  if (cm <= distanceThreshold - 10 && cm > distanceThreshold - 20) {
+    digitalWrite(2, LOW);
+    digitalWrite(3, HIGH);
+    digitalWrite(4, LOW);
+    i=1;
+    while (i==1)
+    {
+    tone(13,1000);
+      delay(150);
+      noTone(13);
+      delay(150);
+      i=0;
+    }
+  }
+  if (cm <= distanceThreshold - 20 && cm > distanceThreshold - 28) {
+    digitalWrite(2, LOW);
+    digitalWrite(3, LOW);
+    digitalWrite(4, HIGH);
+    i=1;
+    while (i==1)
+    {
+    tone(13,1000);
+      delay(50);
+      noTone(13);
+      delay(20);
+      i=0;
+    }
+  }
+  
+  else if (cm<= distanceThreshold-30)
+  {
+    tone(13,1000);
+    noTone(13);
+  }
+  delay(1000); 
+  if(Serial.available()>0)
+{
+Incoming_value= Serial.read();
+Serial.print(Incoming_value);
+Serial.print("\n");
+if(Incoming_value=='1')
+{
+digitalWrite(8,HIGH);
+}
+else if(Incoming_value=='0')
+{
+digitalWrite(8,LOW);
+}
+}
+}
